@@ -19,19 +19,22 @@
         }
 
         body {
-            height: 100vh;
+            /* Ganti height ke min-height biar kalau di scroll nggak kepotong background-nya */
+            min-height: 100vh;
             background: radial-gradient(circle at center, #1a0b2e 0%, var(--bg-color) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden;
             color: #fff;
+            /* Jangan overflow hidden di body, biar bisa scroll di HP */
+            overflow-x: hidden; 
+            padding: 20px 0;
         }
 
         /* Animasi Bintang di Background */
         .stars {
-            position: absolute;
+            position: fixed; /* Ubah ke fixed biar pas di scroll bintangnya stay */
             top: 0;
             left: 0;
             width: 100%;
@@ -56,8 +59,8 @@
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px; /* Nah ini yang bener bro! */
-            padding: 40px;
+            border-radius: 20px;
+            padding: 30px; /* Sedikit dikecilkan biar nggak sempit di HP */
             width: 90%;
             max-width: 600px;
             min-height: 300px;
@@ -67,15 +70,17 @@
             align-items: center;
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
             transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin: auto; /* Biar center */
         }
 
+        /* Tambahan buat handle text panjang di mobile */
         .glass-card.expanded {
-            padding: 50px 40px;
+            padding: 40px 25px;
+            height: auto; /* Biar kartu memanjang ngikutin teks */
             background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 0 50px rgba(255, 51, 102, 0.15);
         }
 
-        /* SVG Surat Cinta Button dengan Neon Glow */
         .mail-svg {
             width: 80px;
             height: 80px;
@@ -88,11 +93,6 @@
             transition: all 0.3s ease;
         }
 
-        .mail-svg:hover {
-            filter: drop-shadow(0 0 25px var(--primary-glow));
-            transform: scale(1.1);
-        }
-
         @keyframes heartbeat {
             0% { transform: scale(1); }
             14% { transform: scale(1.15); }
@@ -103,14 +103,13 @@
 
         .instruction {
             margin-top: 20px;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.5);
             transition: opacity 0.5s ease;
         }
 
-        /* Styling Teks Pesan */
         #message-container {
             display: none;
             text-align: center;
@@ -119,7 +118,7 @@
 
         .greeting {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--primary-glow);
             margin-bottom: 15px;
             text-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
@@ -129,17 +128,17 @@
         }
 
         .typed-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1rem; /* Ukuran teks lebih pas buat HP */
+            line-height: 1.6;
             color: #e0e0e0;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            word-wrap: break-word; /* Biar kata nggak ngelewati batas kartu */
         }
 
         @keyframes fadeInDown {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Partikel yang lebih smooth */
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -147,6 +146,7 @@
             background: radial-gradient(circle, #fff, var(--primary-glow));
             box-shadow: 0 0 10px var(--primary-glow);
             animation: floatAway 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            z-index: 100;
         }
 
         @keyframes floatAway {
@@ -158,25 +158,27 @@
             opacity: 0;
             pointer-events: none;
         }
+
+        /* Perbaikan khusus layar kecil */
+        @media (max-width: 480px) {
+            .glass-card { padding: 25px 20px; }
+            .greeting { font-size: 1.8rem; }
+            .typed-text { font-size: 0.95rem; }
+        }
     </style>
 </head>
 <body>
 
     <div class="stars"></div>
 
-    <!-- Ganti nama 'lagu-romantis.mp3' dengan nama file lagu yang lu punya -->
     <audio id="bgMusic" loop>
         <source src="lagu-romantis.mp3" type="audio/mpeg">
     </audio>
 
     <div class="glass-card" id="card">
-        
-        <!-- Icon Surat Cinta dengan Segel Hati -->
         <svg id="startBtn" class="mail-svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Outline Amplop -->
             <rect x="3" y="6" width="18" height="14" rx="2"></rect>
             <path d="M3 8l8.3 5.5c.4.3 1 .3 1.4 0L21 8"></path>
-            <!-- Segel Hati di tengah -->
             <path d="M12 15.5l-2.6-2.4c-.5-.5-.8-1.2-.9-1.9-.1-1 .7-1.8 1.7-1.8.5 0 .9.2 1.3.6.3-.4.8-.6 1.3-.6 1 0 1.8.8 1.7 1.8-.1.7-.4 1.4-.9 1.9L12 15.5z" fill="var(--primary-glow)" stroke="none"></path>
         </svg>
 
@@ -186,7 +188,6 @@
             <div class="greeting">Today...</div>
             <div id="message" class="typed-text"></div>
         </div>
-
     </div>
 
     <script>
@@ -197,7 +198,6 @@
         const card = document.getElementById('card');
         const bgMusic = document.getElementById('bgMusic');
         
-        // Teks asli lu terpasang di sini
         const ungkapanHati = "Aku tau bukan orang yang paling jago dalam merangkai kata. Terkadang diam bukan karena nggak peduli, tapi karena bingung gimana cara nyampeinnya. Tapi lewat layar ini mau bilang : Perasaan itu nyata udah dari lama, lebih hidup dari sekadar teks biasa. Rasa nya senang sekali bisa ngerasakan ini lagi, Terima kasih ka udah ada sampe hari ini dan makasih juga untuk segala hal, aku mencintai orang-orang yang menjadi diri nya sendiri. Teruslah berkembang ka dimana pun tempat, jangn sampe patah semangat 🙂";
         
         let i = 0;
@@ -207,34 +207,26 @@
             if (i < ungkapanHati.length) {
                 messageDiv.innerHTML += ungkapanHati.charAt(i);
                 i++;
-                // Randomize typing speed for realistic effect
-                let typingSpeed = Math.random() * (120 - 50) + 50; 
+                let typingSpeed = Math.random() * (100 - 40) + 40; 
                 setTimeout(typeWriter, typingSpeed); 
             }
         }
 
         function createMagicParticles(x, y) {
-            for (let j = 0; j < 40; j++) {
+            for (let j = 0; j < 30; j++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                
-                const size = Math.random() * 6 + 2;
+                const size = Math.random() * 5 + 2;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
-                
                 particle.style.left = `${x}px`;
                 particle.style.top = `${y}px`;
-                
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 200 + 50;
+                const distance = Math.random() * 150 + 50;
                 particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
                 particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
-                
                 document.body.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, 1500);
+                setTimeout(() => { particle.remove(); }, 1500);
             }
         }
 
@@ -242,14 +234,11 @@
             if (isTyping) return;
             isTyping = true;
             
-            // Putar lagu
             bgMusic.play().catch(err => console.log("Audio info:", err));
             
-            // Efek partikel
             const rect = startBtn.getBoundingClientRect();
             createMagicParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
 
-            // Transisi UI Front-end yang smooth
             startBtn.classList.add('fade-out');
             instruction.classList.add('fade-out');
             
@@ -258,10 +247,8 @@
                 instruction.style.display = 'none';
                 card.classList.add('expanded');
                 messageContainer.style.display = 'block';
-                
-                // Mulai ngetik setelah kartu membesar
-                setTimeout(typeWriter, 1200);
-            }, 500); // Nunggu fade out selesai
+                setTimeout(typeWriter, 800);
+            }, 500);
         });
     </script>
 </body>
